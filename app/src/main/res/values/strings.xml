@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SearchDemo</string>
+
+
+    <string name="body_physical">体能</string>
+    <string name="body_agility">敏捷</string>
+    <string name="body_balance">平衡</string>
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SearchDemo</string>
+
+
+    <string name="body_physical">Physical</string>
+    <string name="body_agility">Agility</string>
+    <string name="body_balance">Balance</string>
+</resources>

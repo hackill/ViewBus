@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="text_color_yellow">#F1F68911</color>
+    <color name="wave_yellow">#40F68911</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+    <color name="btn_bg_yellow">#F68912</color>
+    <color name="progress_bg">#ffb080</color>
+
+
+    <color name="disable">#2DFFFFFF</color>
+
+    <color name="disable_line">#20FFFFFF</color>
+    <color name="balance_ring">#40FFFFFF</color>
+
+    <color name="average_one">#F1333333</color>
+    <color name="average_two">#E2333333</color>
+    <color name="average_three">#CC333333</color>
+
+    <color name="user_one">#E1FFFFFF</color>
+    <color name="user_two">#D2FFFFFF</color>
+    <color name="user_three">#BCFFFFFF</color>
+
+
+    <color name="arc_blue">#10a679</color>
+    <color name="arc_color">#50ffdeba</color>
+
+    <color name="point_one">#20000000</color>
+    <color name="point_two">#000000</color>
+    <color name="point_three">#666666</color>
+    <color name="background">#70000000</color>
+
+
+</resources>
