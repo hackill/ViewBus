@@ -3,6 +3,7 @@ package com.hackill.body;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,15 +37,14 @@ public class LevelCircleView extends View {
 
     private Point centerPoint = new Point();
 
-    private AnimatorModel currentModel = AnimatorModel.STOP;
-
     // 中心圆半径
     float radius = 0;
     float mInnerRadius = 0;
+    float mTriangleRadius = 0;
 
     private RectF mRectF = new RectF();
     private RectF mHeartRectF = new RectF();
-    private float mHeartRectFRadius = 1;
+    private float heartRadius = 1;
     private Point mHeartCenterPoint = new Point();
 
     private final static int LEVEL_NUM = 5;
@@ -55,6 +55,7 @@ public class LevelCircleView extends View {
     private String mUnitValue = "心率 (bpm)";
 
     private int mColor1, mColor2, mColor3, mColor4, mColor0;
+    private int mUColor1, mUColor2, mUColor3, mUColor4, mUColor0;
 
     private List<String> mLevelArray = new ArrayList<>(Arrays.asList("最佳燃脂", "心肺脂肪", "耐力锻炼", "极限锻炼", "热身心率"));
 
@@ -111,6 +112,12 @@ public class LevelCircleView extends View {
         mColor3 = getContext().getResources().getColor(R.color.level_four);
         mColor4 = getContext().getResources().getColor(R.color.level_five);
 
+//        mUColor0 = getContext().getResources().getColor(R.color.level_one);
+//        mUColor1 = getContext().getResources().getColor(R.color.level_two);
+//        mUColor2 = getContext().getResources().getColor(R.color.level_three);
+//        mUColor3 = getContext().getResources().getColor(R.color.level_four);
+//        mUColor4 = getContext().getResources().getColor(R.color.level_five);
+
         sectorAngle = (360 - INTERVAL_ANGLE * LEVEL_NUM) / LEVEL_NUM;
     }
 
@@ -128,6 +135,7 @@ public class LevelCircleView extends View {
 
 
         mInnerRadius = radius * 0.62f;
+        mTriangleRadius = radius * 0.69f;
 
         float rectRadius = radius * 0.76f;
 
@@ -136,14 +144,16 @@ public class LevelCircleView extends View {
         mRectF.bottom = rectRadius;
         mRectF.right = rectRadius;
 
-        mHeartRectFRadius = mInnerRadius * 0.16f;
+        heartRadius = mInnerRadius * 0.16f;
         mHeartCenterPoint.set(0, -(int) (mInnerRadius * 0.65f));
 
 
-        mHeartRectF.left = -mHeartRectFRadius + mHeartCenterPoint.x;
-        mHeartRectF.right = mHeartRectFRadius + mHeartCenterPoint.x;
-        mHeartRectF.top = -mHeartRectFRadius + mHeartCenterPoint.y;
-        mHeartRectF.bottom = mHeartRectFRadius + mHeartCenterPoint.y;
+        mHeartRectF.left = -heartRadius + mHeartCenterPoint.x;
+        mHeartRectF.right = heartRadius + mHeartCenterPoint.x;
+        mHeartRectF.top = -heartRadius + mHeartCenterPoint.y;
+        mHeartRectF.bottom = heartRadius + mHeartCenterPoint.y;
+
+        triangleAngle = (INTERVAL_ANGLE / 2 + sectorAngle / 2) / 180 * (float) Math.PI;
 
         mValuePaint.setTextSize(mInnerRadius * 0.85f);
         mUnitPaint.setTextSize(mInnerRadius * 0.18f);
@@ -161,30 +171,58 @@ public class LevelCircleView extends View {
         super.onDraw(canvas);
         // 将画布圆心拖至中点
         canvas.translate(centerPoint.x, centerPoint.y);
-        drawCenter(canvas);
         drawSector(canvas);
+        drawCenter(canvas);
 
     }
 
     private int mSelected = 0;
 
+    private Path mTrianglePath = new Path();
+
     private void drawSector(Canvas canvas) {
         float startAngle = -90 + INTERVAL_ANGLE / 2;
         float sectorPerimeter = (float) (mRectF.width() * Math.PI * sectorAngle / 360);
-
 
         Path path = new Path();
 
         for (int i = 0; i < LEVEL_NUM; i++) {
             //绘制弧度
             mArcPaint.setColor(getColor(i));
+            if (mSelected == i) {
+                mArcTextPaint.setAlpha(255);
+                mArcPaint.setAlpha(255);
+            } else {
+                mArcTextPaint.setAlpha(51);
+                mArcPaint.setAlpha(51);
+            }
             canvas.drawArc(mRectF, startAngle, sectorAngle, false, mArcPaint);
+
             path.reset();
-            path.addArc(mRectF, startAngle, sectorAngle);
-            //绘制text
-            canvas.drawTextOnPath(mLevelArray.get(i), path, getXOffset(mLevelArray.get(i), sectorPerimeter), -radius * 0.1f, mArcTextPaint);
+            if (i == 1 || i == 2 || i == 3) {
+                path.addArc(mRectF, startAngle + sectorAngle, -sectorAngle);
+                //绘制text
+                canvas.drawTextOnPath(mLevelArray.get(i), path, getXOffset(mLevelArray.get(i), sectorPerimeter), radius * 0.16f, mArcTextPaint);
+            } else {
+                path.addArc(mRectF, startAngle, sectorAngle);
+                //绘制text
+                canvas.drawTextOnPath(mLevelArray.get(i), path, getXOffset(mLevelArray.get(i), sectorPerimeter), -radius * 0.1f, mArcTextPaint);
+            }
+
             startAngle += sectorAngle + INTERVAL_ANGLE;
         }
+
+        calcTrianglePath();
+
+        canvas.drawPath(mTrianglePath, mInnerPaint);
+    }
+
+    private void calcTrianglePath() {
+        mTrianglePath.reset();
+        mTrianglePath.moveTo(mTriangleRadius * (float) Math.sin(triangleAngle), -mTriangleRadius * (float) Math.cos(triangleAngle));
+        mTrianglePath.lineTo((mInnerRadius - 2) * (float) Math.sin(triangleAngle - Math.PI * 0.03f), -(mInnerRadius - 2) * (float) Math.cos(triangleAngle - Math.PI * 0.03f));
+        mTrianglePath.lineTo((mInnerRadius - 2) * (float) Math.sin(triangleAngle + Math.PI * 0.03f), -(mInnerRadius - 2) * (float) Math.cos(triangleAngle + Math.PI * 0.03f));
+        mTrianglePath.close();
     }
 
     private int getColor(int index) {
@@ -205,10 +243,10 @@ public class LevelCircleView extends View {
 
     private void drawCenter(Canvas canvas) {
         //calc
-        mHeartRectF.left = -mHeartRectFRadius + mHeartCenterPoint.x;
-        mHeartRectF.right = mHeartRectFRadius + mHeartCenterPoint.x;
-        mHeartRectF.top = -mHeartRectFRadius + mHeartCenterPoint.y;
-        mHeartRectF.bottom = mHeartRectFRadius + mHeartCenterPoint.y;
+        mHeartRectF.left = -heartRadius + mHeartCenterPoint.x;
+        mHeartRectF.right = heartRadius + mHeartCenterPoint.x;
+        mHeartRectF.top = -heartRadius + mHeartCenterPoint.y;
+        mHeartRectF.bottom = heartRadius + mHeartCenterPoint.y;
 
         //绘制白圆
         canvas.drawCircle(0, 0, mInnerRadius, mInnerPaint);
@@ -235,33 +273,38 @@ public class LevelCircleView extends View {
         return paint.measureText(value);
     }
 
-    public void startAutoAnimation() {
-        currentModel = AnimatorModel.COUNTER;
-        smoothRefreshTime();
+    private float triangleAngle = 0;
+
+
+    public void startAnimation() {
+        smoothRefreshHeart();
     }
 
-    float progress = 0;
-
-    public void setProgress(int index, int total) {
-        currentModel = AnimatorModel.COUNTER;
-        progress = index * 1.0f / total;
-        invalidate();
+    public void setLevel(int level) {
+        mSelected = level % LEVEL_NUM;
+        smoothRefreshTime(level);
     }
-
 
     public void stopAnimation() {
-        currentModel = AnimatorModel.STOP;
         if (mAnimatorSet != null) {
             mAnimatorSet.cancel();
             mAnimatorSet = null;
         }
+        if (mAnimatorHeartSet != null) {
+            mAnimatorHeartSet.cancel();
+            mAnimatorHeartSet = null;
+        }
     }
 
     private AnimatorSet mAnimatorSet = new AnimatorSet();
+    private AnimatorSet mAnimatorHeartSet = new AnimatorSet();
 
-    private void smoothRefreshTime() {
+    private void smoothRefreshTime(int level) {
 
-        ObjectAnimator animator = ObjectAnimator.ofFloat(this, "progress", 0, 1).setDuration(2000);
+        // level angle
+        float targetAngle = (INTERVAL_ANGLE / 2 + sectorAngle / 2 + (INTERVAL_ANGLE + sectorAngle) * level) / 180 * (float) Math.PI;
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(this, "triangleAngle", triangleAngle, targetAngle).setDuration(500);
 
         animator.setInterpolator(new TimeInterpolator() {
             @Override
@@ -278,12 +321,35 @@ public class LevelCircleView extends View {
         mAnimatorSet.start();
     }
 
-    public void setProgress(float progress) {
-        this.progress = progress;
+    private void smoothRefreshHeart() {
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(this, "heartRadius", heartRadius, heartRadius * 1.5f, heartRadius * 0.7f, heartRadius * 1.2f, heartRadius * 0.8f, heartRadius * 0.95f, heartRadius).setDuration(2000);
+
+        animator.setInterpolator(new TimeInterpolator() {
+            @Override
+            public float getInterpolation(float input) {
+                return input;
+            }
+        });
+        animator.setRepeatMode(ValueAnimator.RESTART);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        if (mAnimatorHeartSet != null && mAnimatorHeartSet.isRunning()) {
+            mAnimatorHeartSet.cancel();
+            mAnimatorHeartSet = null;
+        }
+        mAnimatorHeartSet = new AnimatorSet();
+        mAnimatorHeartSet.play(animator);
+        mAnimatorHeartSet.start();
+
+    }
+
+    public void setTriangleAngle(float triangleAngle) {
+        this.triangleAngle = triangleAngle;
         invalidate();
     }
 
-    enum AnimatorModel {
-        STOP, COUNTER
+    public void setHeartRadius(float heartRadius) {
+        this.heartRadius = heartRadius;
+        invalidate();
     }
 }

@@ -2,6 +2,7 @@ package com.hackill;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.hackill.body.LevelCircleView;
@@ -13,6 +14,7 @@ import com.hackill.demo.R;
 public class LevelCircleActivity extends Activity {
 
 
+    private static final String TAG = "LevelCircleActivity";
     LevelCircleView levelCircleView;
 
 
@@ -27,8 +29,26 @@ public class LevelCircleActivity extends Activity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                levelCircleView.setProgress(i, 100);
+
                 i++;
+                levelCircleView.setLevel(i);
+            }
+        });
+
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                i--;
+                levelCircleView.setLevel(i);
+            }
+        });
+
+        levelCircleView.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "run: .....");
+                levelCircleView.startAnimation();
             }
         });
     }
