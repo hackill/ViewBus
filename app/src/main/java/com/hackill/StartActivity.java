@@ -101,6 +101,11 @@ public class StartActivity extends Activity {
     }
 
 
+    public void onLevelCircle(View v) {
+        startActivity(new Intent(this, LevelCircleActivity.class));
+    }
+
+
     public void onUp(View v) {
         audioManage.adjustVolume(AudioManager.ADJUST_RAISE, 0);
         int current = audioManage.getStreamVolume(AudioManager.STREAM_RING);

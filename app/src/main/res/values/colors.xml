@@ -36,4 +36,11 @@
     <color name="background">#70000000</color>
 
 
+    <color name="level_one">#08cfa7</color>
+    <color name="level_two">#18d62f</color>
+    <color name="level_three">#ffdf02</color>
+    <color name="level_four">#fd0000</color>
+    <color name="level_five">#0088ff</color>
+
+
 </resources>

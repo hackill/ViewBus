@@ -27,6 +27,7 @@
         <activity android:name="com.hackill.PickerActivity" />
         <activity android:name="com.hackill.BleSearchActivity" />
         <activity android:name="com.hackill.BleSignalActivity" />
+        <activity android:name="com.hackill.LevelCircleActivity" />
     </application>
 
 </manifest>
