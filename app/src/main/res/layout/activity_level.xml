@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.codetail.widget.RevealFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/two"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/level_five">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/one"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/arc_blue">
+
+        <com.hackill.body.LevelCircleView
+            android:id="@+id/level"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="#40000000">
+
+        </com.hackill.body.LevelCircleView>
+
+
+    </RelativeLayout>
+
 
     <LinearLayout
+        android:id="@+id/function"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -13,27 +41,16 @@
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Level+" />
+            android:text="One" />
 
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Level-" />
+            android:text="Two" />
     </LinearLayout>
 
+</io.codetail.widget.RevealFrameLayout>
 
-    <com.hackill.body.LevelCircleView
-        android:id="@+id/level"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#40000000">
-
-    </com.hackill.body.LevelCircleView>
-
-
-</RelativeLayout>
 
